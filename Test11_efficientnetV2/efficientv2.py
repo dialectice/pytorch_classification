@@ -242,10 +242,10 @@ class EfficientNetV2(nn.Module):
             op = FusedMBConv if cnf[-2]==0 else MBconv
             for i in range(repeats):
                 blocks.append(op(kernel_size=cnf[1],
-                                 input_c=cnf[4],
+                                 input_c=cnf[4] if i==0 else cnf[5],
                                  out_c=  cnf[5],
                                  expand_ratio=cnf[3],
-                                 stride=cnf[2],
+                                 stride=cnf[2] if i == 0 else 1,
                                  se_ratio=cnf[-1],
                                  drop_rate = drop_connect_rate*block_id/total_blocks,
                                  norm_layer=norm_layer            
@@ -293,7 +293,7 @@ class EfficientNetV2(nn.Module):
         return x
     
 
-    def efficientnetv2_s(num_classes: int = 1000):
+def efficientnetv2_s(num_classes: int = 1000):
         """
         EfficientNetV2
         https://arxiv.org/abs/2104.00298
