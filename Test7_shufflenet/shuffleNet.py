@@ -79,7 +79,7 @@ class InvertedResidual(nn.Module):
             out = torch.cat((x1,self.branch2(x2)), dim=1)
         
         else:
-            out = torch.cat((self.branch1(x1),self.branch2(x2)),dim = 1)
+            out = torch.cat((self.branch1(x),self.branch2(x)),dim = 1)
         
         out = channel_shuffle(out, 2)
         return out
@@ -91,9 +91,9 @@ class ShuffleNetv2(nn.Module):
     def __init__(self,
                  stages_repeats:List[int],
                  stages_out_channels:List[int],
-                 num_class:int = 1000,
+                 num_classes:int = 1000,
                  inverted_residual:Callable[...,nn.Module]=InvertedResidual) :
-        super(ShuffleNetv2).__init__()
+        super(ShuffleNetv2,self).__init__()
         
         if len(stages_repeats) != 3:
             raise ValueError("expected stages_repeats as list of 3 positive ints")
@@ -135,7 +135,7 @@ class ShuffleNetv2(nn.Module):
             nn.ReLU(inplace=True)
         )
         
-        self.fc = nn.Linear(output_channels, num_class)
+        self.fc = nn.Linear(output_channels, num_classes)
     
     def forward(self,x)->Tensor:
         x = self.conv1(x)
